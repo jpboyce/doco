@@ -14,6 +14,18 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+
 plugins:
   - tags
-  - search        
+  - search
+  
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/jpboyce
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/jpboyce/
+  consent:
+    title: Cookie consent
+    description: >-
+      This website uses cookies to ensure you get the best experience on our website.          
