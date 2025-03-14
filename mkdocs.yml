@@ -5,6 +5,7 @@ theme:
   feature:
     - navigation.expanded
     - navigation.path
+    - content.code.copy
   palette:
     # Palette toggle for light mode
     - scheme: default
@@ -31,4 +32,20 @@ extra:
   consent:
     title: Cookie consent
     description: >-
-      This website uses cookies to ensure you get the best experience on our website.          
+      This website uses cookies to ensure you get the best experience on our website.
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  #- myst_parser
+  #- attr_list
+  #- md_in_html
+  #- tables
+  #- pymdownx.superfences
+  #- pymdownx.tabbed
+  #- pymdownx.highlight
