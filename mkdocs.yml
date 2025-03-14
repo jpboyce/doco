@@ -2,6 +2,9 @@ site_name: Jesse's Doco
 site_url: https://doco.jpboyce.org
 theme:
   name: material
+  feature:
+    - navigation.expanded
+    - navigation.path
   palette:
     # Palette toggle for light mode
     - scheme: default
