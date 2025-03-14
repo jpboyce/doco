@@ -1,11 +1,11 @@
 site_name: Jesse's Doco
-site_url: https://doco.jpboyce.org
+#site_url: https://doco.jpboyce.org
 theme:
   name: material
   feature:
-    - navigation.expanded
-    - navigation.path
-    - content.code.copy
+    - toc.integrate
+    #- navigation.path
+    #- content.code.copy
   palette:
     # Palette toggle for light mode
     - scheme: default
@@ -22,6 +22,7 @@ theme:
 plugins:
   - tags
   - search
+  - timetoread
   
 extra:
   social:
@@ -39,9 +40,11 @@ markdown_extensions:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
+  - pymdownx.inlinehilite # https://facelessuser.github.io/pymdown-extensions/extensions/inlinehilite/
+  - pymdownx.snippets # https://facelessuser.github.io/pymdown-extensions/extensions/snippets/
+  - pymdownx.superfences # https://facelessuser.github.io/pymdown-extensions/extensions/superfences/
+  - admonition
+  - pymdownx.details # https://facelessuser.github.io/pymdown-extensions/extensions/details/
   #- myst_parser
   #- attr_list
   #- md_in_html
