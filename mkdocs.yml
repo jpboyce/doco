@@ -20,7 +20,8 @@ theme:
         name: Switch to light mode
 
 plugins:
-  - tags
+  - tags:
+      tags_file: tags.md
   - search
   - timetoread
   
@@ -42,7 +43,11 @@ markdown_extensions:
       pygments_lang_class: true
   - pymdownx.inlinehilite # https://facelessuser.github.io/pymdown-extensions/extensions/inlinehilite/
   - pymdownx.snippets # https://facelessuser.github.io/pymdown-extensions/extensions/snippets/
-  - pymdownx.superfences # https://facelessuser.github.io/pymdown-extensions/extensions/superfences/
+  - pymdownx.superfences: # https://facelessuser.github.io/pymdown-extensions/extensions/superfences/
+      custom_fences:
+            - name: mermaid
+              class: mermaid
+              format: !!python/name:pymdownx.superfences.fence_code_format
   - admonition
   - pymdownx.details # https://facelessuser.github.io/pymdown-extensions/extensions/details/
   #- myst_parser
