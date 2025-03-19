@@ -54,6 +54,16 @@ Bicep files have a number of Elements that it can contain.  The ordering of thes
 
 The consistent pattern that Microsoft seems to use mimics the ordering of the items in the list above.
 
+#### Parameters
+
+As Microsoft's Bicep documentation notes: 
+> "parameters are for values that need to vary for different deployments"
+
+Common use cases for "different deployments" are deploying to different environments (ie. DEV, TEST, PROD) to different regions.  On that basis, the parameters should give coverage on those values.  Going all the way back to ARM templates, the recommendation at the time was to keep parameters to a minimum as well.
+
+Parameters have a number of decorators that can apply constraints or metadata to the parameter.  For example, the maximum length can be set as a constraint.
+
+
 ## Testing
 
 ### Use a Testing Pipeline
