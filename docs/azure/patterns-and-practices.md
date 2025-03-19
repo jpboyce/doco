@@ -24,6 +24,17 @@ Bicep's core capability is to declare Azure infrastructure.  It's syntax is simp
 
 Convention over Configuration is a software design concept aimed at reducing the number of decisions or inputs required to do something.  It partners well with Infrastructure provisioning and Infrastructure as Code because we often create rules for how resources should be, such as their name and other characteristics.  Using resource naming as an example, if your organisation has a defined naming standard similar to that mentioned in their documentation, it is possible to construct the names (ie. use a convention) rather than have their hard-coded (ie. they become an item in configuration)
 
+### Resource Naming Considerations
+
+This item is less about Bicep and more about general naming conventions.  Many Azure resources provide generous sizing for names, with many allowing up to 64 characters.  Some even exceed this.  However, some resources have very small naming lengths.  Some of these include:
+
+* Windows virtual machines and scale sets are limited to 15 characters
+* Several resources types such as Elastic SANs, Storage Accounts and Key Vaults are limited to 24 characters
+
+With this in mind, careful consideration needs to be given to the components that make up the naming convention you use.  An extra complication in this issue is Microsoft's own recommended naming convention includes the full region name.  For Australian regions, this results in a very long value.  There is also not a standard set of abbreviations.  [Jed Laundry's list of different abbreviations](https://www.jlaundry.nz/2022/azure_region_abbreviations/).  Jed recommends using the Terraform CAF short names, which results in most regions being 2 or 3 characters.
+
+Similarly for the environment value, it may help to adopt a shortened form of the environment name, such as `TST` instead of `TEST` to save on characters.  For the workload/application/project part of the resource name, adopting an abbreviated form can also help.
+
 ## Authoring
 
 ### Use a consistent entry point file name
