@@ -3,7 +3,7 @@ site_url: https://doco.jpboyce.org
 theme:
   name: material
   feature:
-    - toc.integrate
+    #- toc.integrate
     #- navigation.path
     #- content.code.copy
   palette:
@@ -57,3 +57,6 @@ markdown_extensions:
   #- pymdownx.superfences
   #- pymdownx.tabbed
   #- pymdownx.highlight
+
+extra_css:
+  - overrides/extra.css
