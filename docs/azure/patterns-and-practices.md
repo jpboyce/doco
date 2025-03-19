@@ -112,3 +112,5 @@ Deploying directly from the main branch in software development is generally con
 At the end of the Testing Pipeline, it's easy to implement a task that creates an artifact.  This artifact is versioned and would represent a definitive version of Bicep code that passed tests.  These artifacts can then be used for deployment.  If problems do happen, the last version to successfully deploy can be easily used to roll back.
 
 ### Use Approval Gates for Higher Environments
+
+With Classic Release Pipelines in Azure Devops, it is very easy to add approval gates to a release stage.
