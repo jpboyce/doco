@@ -1,6 +1,6 @@
 ---
 title: Creating Platforms for Test Kitchen
-date: 2019-08-01
+date: 2018-06-10
 status: deprecated
 categories:
     - Chef
