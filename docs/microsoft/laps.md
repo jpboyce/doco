@@ -92,182 +92,115 @@ Step
 
 Script/Screenshot
 
-1	
-Install LAPS GPO CSE
+1. Install LAPS GPO CSE
+   ```
+   msiexec /q /i <path>\LAPS.<platform>.msi
+   ```
+2. Confirm installation
 
+![Image](../images/be908134-eb75-41e4-94ee-22ab00a746e0.png)
 
+### Enable Auditing of Password Resets
 
-msiexec /q /i <path>\LAPS.<platform>.msi
-2	
-Confirm installation
+It’s possible to enable auditing of password resets.  This can be achieved using the following PowerShell command.  Auditing of Directory Service Access events also needs to be enabled on Domain Controllers for audit events to be logged successfully.
 
-Open image-20211021-093021.png
+   ``` powershell
+   Set-AdmPwdAuditing -Identity:<OU NAME> -AuditedPrinciples:<security principals to audit>
+   ``` 
 
- 
-
-Enable Auditing of Password Resets
-
-It’s possible to enable auditing of password resets.  This can be achieved using the following PowerShell command.  Auditing of Directory Service Access events also needs to be abled on Domain Controllers for audit events to be logged successfully.
-
-
-
-Set-AdmPwdAuditing -Identity:<OU NAME> -AuditedPrinciples:<security principals to audit>
- 
-
-Group Policy
+### Group Policy
 
 The specific settings related to LAPS are controlled by Group Policy.
 
-Step
+1. If using a Central Store, copy the **`AdmPwd.admx`** and **`AdmPwl.adml`** from **`C:\Windows\PolicyDefinitions`** to the Central Store location (ie **`\\contoso.com\SYSVOL\contoso.com\Policies\PolicyDefintions`**)
+2. Create a new Group Policy Object and open it for editing.  Expand the Administrative Templates branch.  You should see a LAPS entry
 
-Script/Screenshot
+    ![Image](../images/fd65ac3c-9730-4697-9db9-bced18468f85.png)
 
-If using a Central Store, copy the AdmPwd.admx and AdmPwl.adml from C:\Windows\PolicyDefinitions to the Central Store location (ie \\contoso.com\SYSVOL\contoso.com\Policies\PolicyDefintions)
+3. Open the **`Enable local admin password management`** item and set it to **`Enabled`**.  Click OK to save
 
- 
+    ![Image](../images/26a3a60a-fc5b-4f89-8c45-bad8eac35f88.png)
 
-Create a new Group Policy Object and open it for editing.  Expand the Administrative Templates branch.  You should see a LAPS entry
+4. Open the **`Password Settings`** item.  Set it to **`Enabled`** and then set the password options as required.  Click OK to save.
 
-Open image-20211021-094039.png
+    ![Image](../images/424328e0-58fd-4ab8-9313-4f2d06f66a50.png)
 
- 
+5. If you want to manage a custom local administrator account, open the **`Name of administrator account to manage`**.  Set to Enable and enter the name of the custom admin account
 
-Open the Enable local admin password management item and set it to Enabled.  Click OK to save
+    ![Image](../images/d47e4090-28fe-43cf-b2de-480677885216.png)
 
-Open image-20211021-094133.png
+6. Once all the settings are done, close the GPO editor window
+7. Link the GPO to the Organisation Unit containing the systems to be managed by LAPS
 
-Open the Password Settings item.  Set it to Enabled and then set the password options as required.  Click OK to save.
+## Operations
 
-Open image-20211021-094309.png
-
-If you want to manage a custom local administrator account, open the Name of administrator account to manage.  Set to Enable and enter the name of the custom admin account
-
-Open image-20211021-094512.png
-
-Once all the settings are done, close the GPO editor window
-
- 
-
-Link the GPO to the Organisation Unit containing the systems to be managed by LAPS
-
- 
-
- 
-
-Operations
-
- 
-
-How to get the passwords
+### How to get the passwords
 
 Passwords can be viewed several ways: via PowerShell, in the AD Users and Computers MMC and using the LAPS UI tool.
 
-Method
+1. PowerShell.  Use the **`Get-AdmPwdPassword`** cmdlet and specify the ComputerName
+   ``` powershell
+   Get-AdmPwdPassword -ComputerName <computerName>
+   ```
+   ![Image](../images/28d1def7-9c3e-4547-ba97-09dc256e200f.png)
 
-Script/Screenshot
+2. AD Users and Computers MMC.  Open the Computer Object and select the Attribute Editor tab.  Scroll down to the **`ms-Mcs-AdmPwd`** attribute
 
-PowerShell.  Use the Get-AdmPwdPassword cmdlet and specify the ComputerName
+    ![Image](../images/bae9794b-c9a1-46a6-8d67-21be9b3923dc.png)
 
+3. LAPS UI Tool.  Run the Tool and enter the Computer Name in the field.  Click Search
 
+    ![Image](../images/236685d8-5231-426b-a187-c3fdd1ac70c1.png)
 
-Get-AdmPwdPassword -ComputerName <computerName>
-Open image-20211021-100226.png
-
- 
-
-AD Users and Computers MMC.  Open the Computer Object and select the Attribute Editor tab.  Scroll down to the ms-Mcs-AdmPwd attribute
-
-Open image-20211021-100412.png
-
- 
-
-LAPS UI Tool.  Run the Tool and enter the Computer Name in the field.  Click Search
-
-Open image-20211021-100620.png
-
- 
-
- 
-
-How to force a reset
+### How to force a reset
 
 In some circumstances, it may be required to reset the password.  This can be performed using PowerShell or the LAPS UI tool.
 
-Method
+1. Powershell
+    ``` powershell
+    Reset-AdmPwdPassword -ComputerName <computerName>
+    ```
+2. LAPS UI Tool.  Run the tool and search for the target system.  Set the desired expiration time (which will force a reset at that time) and click the Set button
 
-Script/Screenshot
+    ![Image](../images/b9c7f6c9-03ef-4ceb-96d0-2fc3f9b4d729.png)
 
-Powershell.
+### Experience of Non-Authorised Users
 
+If a user isn’t part of the set of allowed principals used for configuration of LAPS, they won’t see the password.  For example, if a non-authorised user tries to use the PowerShell cmdlet to read the password, no value is returned:
 
-
-Reset-AdmPwdPassword -ComputerName <computerName>
-LAPS UI Tool.  Run the tool and search for the target system.  Set the desired expiration time (which will force a reset at that time) and click the Set button
-
-Open image-20211021-101129.png
-
- 
-
-Experience of Non-Authorised Users
-
-If a user isn’t part of the set of allowed principals used for configuration of LAPS, they won’t see the password.  For example, if a non-authorised user tries to use the PowerShell cmdlet to read the passsword, no value is returned:
-
-Open image-20211021-102146.png
+![Image](../images/7b227242-f116-4898-888c-5c320f946317.png)
 
 If attempting to view the password in AD Users and Computers, only a blank is shown.  If the same non-authorised user tries to force a password reset, they will be denied.
 
- 
+![Image](../images/55004053-669b-4045-953e-cdc41b8dd470.png)
 
-Open image-20211021-102311.png
 
- 
-
-Using audit data
+### Using audit data
 
 If auditing is enabled, event log entries will be generated in the Security log of Domain Controllers.  An example is event ID 4662 which is generated when a password is successfully read.  The event will contain details of the user who read the password and related object (ie. the target computer).  An example of a successful read event is below:
 
-Open image-20211021-103322.png
+![Image](../images/5d1c0ed2-7dd1-4606-9938-910bbd34408c.png)
 
 The contents of the red box is the user account that attempted the reading of the password (in this case, the domain admin account).  The green box shows the details of the object that was read (SVR22).
 
- 
+### Log Data
 
-Log Data
+By default, LAPS will log errors only.  The logging occurs in the local Event Log with the source of **`AdmPwd`**.  The log level can be increased by editing the registry key **`HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\GPExtensions{D76B9641-3288-4f75-942D-087DE603E3EA}`**, value **`ExtensionDebugLevel`** (type **`DWORD`**).  To log errors and warnings, set to 1.  To enable verbose logging, set to 2.  An example of events logged with verbose logging is below:
 
-By default, LAPS will log errors only.  The logging occurs in the local Event Log with the source of AdmPwd.  The log level can be increased by editing the registry key HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\GPExtensions{D76B9641-3288-4f75-942D-087DE603E3EA}, value ExtensionDebugLevel (type DWORD).  To log errors and warnings, set to 1.  To enable verbose logging, set to 2.  An example of events logged with verbose logging is below:
+| Event ID | Description |
+|---|---|
+| 15 | Beginning Processing|
+| 5 | Validation passed for new local admin password|
+| 13 | Local Administrator’s password has been reported to AD|
+| 12 | Local Administrator’s password has been changed|
+| 14 | Finished successfully|
 
-Event ID
+## References
 
-Description
+[Microsoft LAPS usage assessment - Microsoft Defender for Identity](https://docs.microsoft.com/en-us/defender-for-identity/cas-isp-laps)
 
-15
+[Download Local Administrator Password Solution (LAPS) from Official Microsoft Download Center](https://www.microsoft.com/en-us/download/details.aspx?id=46899)
 
-Beginning Processing
+[https://4sysops.com/archives/introduction-to-microsoft-laps-local-administrator-password-solution/](https://4sysops.com/archives/introduction-to-microsoft-laps-local-administrator-password-solution/)
 
-5
-
-Validation passed for new local admin password
-
-13
-
-Local Administrator’s password has been reported to AD
-
-12
-
-Local Administrator’s password has been changed
-
-14
-
-Finished successfully
-
- 
-
-References
-
-Microsoft LAPS usage assessment - Microsoft Defender for Identity 
-
-Download Local Administrator Password Solution (LAPS) from Official Microsoft Download Center 
-
-https://4sysops.com/archives/introduction-to-microsoft-laps-local-administrator-password-solution/ 
-
-A Look at the Microsoft LAPS Group Policy Settings | Int64 Software Blog 
+[A Look at the Microsoft LAPS Group Policy Settings | Int64 Software Blog](https://int64software.com/blog/2018/06/28/a-look-at-the-microsoft-laps-group-policy-settings/)
