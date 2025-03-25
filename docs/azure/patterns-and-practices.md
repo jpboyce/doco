@@ -6,7 +6,7 @@ categories:
 tags:
     - Azure
     - Bicep
----    
+---
 
 # Patterns and Practices
 
@@ -56,7 +56,7 @@ The consistent pattern that Microsoft seems to use mimics the ordering of the it
 
 #### Parameters
 
-As Microsoft's Bicep documentation notes: 
+As Microsoft's Bicep documentation notes:
 > "parameters are for values that need to vary for different deployments"
 
 Common use cases for "different deployments" are deploying to different environments (ie. DEV, TEST, PROD) to different regions.  On that basis, the parameters should give coverage on those values.  Going all the way back to ARM templates, the recommendation at the time was to keep parameters to a minimum as well.
@@ -114,3 +114,9 @@ At the end of the Testing Pipeline, it's easy to implement a task that creates a
 ### Use Approval Gates for Higher Environments
 
 With Classic Release Pipelines in Azure Devops, it is very easy to add approval gates to a release stage.
+
+### Use Unique Names for Deployments
+
+If a Bicep deployment is executed using the command-line tools, it will use a deployment name that defaults to the same name as the Bicep file.  So a main.bicep file will create deployments called main.  This behaviour will meant that past deployment details will be overwritten by the most recent one.
+
+If the `ARM Template deployment` task in Azure DevOps is used to perform Bicep deployments, it will use a generated name that includes the Bicep file.  This ensures the deployments should have unique names and the deployment details are preserved.
