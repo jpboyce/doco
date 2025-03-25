@@ -33,7 +33,7 @@ This item is less about Bicep and more about general naming conventions.  Many A
 
 With this in mind, careful consideration needs to be given to the components that make up the naming convention you use.  An extra complication in this issue is Microsoft's own recommended naming convention includes the full region name.  For Australian regions, this results in a very long value.  There is also not a standard set of abbreviations.  [Jed Laundry's list of different abbreviations](https://www.jlaundry.nz/2022/azure_region_abbreviations/).  Jed recommends using the Terraform CAF short names, which results in most regions being 2 or 3 characters.
 
-Similarly for the environment value, it may help to adopt a shortened form of the environment name, such as `TST` instead of `TEST` to save on characters.  For the workload/application/project part of the resource name, adopting an abbreviated form can also help.
+Similarly for the environment value, it may help to adopt a shortened form of the environment name, such as `TST` instead of `TEST` to save on characters.  For the workload/application/project part of the resource name, adopting an abbreviated form can also help.  More verbose information can be reflected in tagging applied to the resources.
 
 ## Authoring
 
@@ -61,8 +61,7 @@ As Microsoft's Bicep documentation notes:
 
 Common use cases for "different deployments" are deploying to different environments (ie. DEV, TEST, PROD) to different regions.  On that basis, the parameters should give coverage on those values.  Going all the way back to ARM templates, the recommendation at the time was to keep parameters to a minimum as well.
 
-Parameters have a number of decorators that can apply constraints or metadata to the parameter.  For example, the maximum length can be set as a constraint.
-
+Parameters have a number of decorators that can apply constraints or metadata to the parameter.  For example, the maximum length can be set as a constraint.  This can be useful in creating an early failure gate.
 
 ## Testing
 
@@ -102,6 +101,10 @@ PSRule results can also be exported to various formats.  Some of these formats c
 #### What-if Check
 
 Bicep has a a `what-if` command that provide a preview of the changes that will occur if the Bicep file is deployed.  This is similar to Terraform's `plan` command.  While it gets a bit closer to determining whether a Bicep file will deploy correctly, it's not totally accurate.  There's a gap between what the `what-if` command will report and what actually happens during deployment.
+
+#### Test Deployment
+
+Even with all the previous steps, there are times when a real deployment of Bicep code can fail.  By doing a test deployment, you can get a heads up on the potential issues.  Ideally, the test deployment should be ephemeral, existing only for moments (for a variety of resources, including cost savings).  There may be value in keeping it available in the event of a failed deployment to aid in troubleshooting.
 
 ## Deploying
 
