@@ -20,6 +20,59 @@ Bicep's core capability is to declare Azure infrastructure.  It's syntax is simp
 
 ### Resource vs Module vs Verified Module Behaviors
 
+One of the nice features of Bicep is being able to reference properties of one resource in another reason.  This allows us to easily and securely pass values between the resources where a relationship may exist.  A very common example of this is Function Apps, which rely on a Storage Account to store state and other data.  When the resources are coded as plain Bicep resources, this is easy to achieve:
+
+``` bicep hl_lines="2 25"
+@description('Storage Account Resource')
+resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
+  name: storageAccountName
+  location: location
+  sku: {
+    name: storageAccountSku
+  }
+  kind: storageAccountKind
+  properties: {
+    supportsHttpsTrafficOnly: true
+    minimumTlsVersion: 'TLS1_2'
+  }
+}
+
+@description('Function App Resource')
+resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
+  name: functionAppName
+  location: location
+  kind: 'functionapp'
+  properties: {
+    siteConfig: {
+      appSettings: [
+        {
+          name: 'AzureWebJobsStorage'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=core.windows.net'
+        }
+        {
+          name: 'FUNCTIONS_WORKER_RUNTIME'
+          value: 'dotnet'
+        }
+      ]
+    }
+    serverFarmId: functionAppServicePlan.id
+    httpsOnly: true
+    clientAffinityEnabled: false
+    clientCertEnabled: false
+  }
+}
+```
+
+As shown in the example, the Function App has a setting called `AzureWebJobsStorage` that references both the Storage Account's name property and it's access key.
+
+If a module is used for the Storage Account, the listKeys Resource function is no longer available.  It is possible to define outputs in the module for the Function App to reference, such as the name using the format `<module-name>.outputs.<property-name>.  When attempting to use Outputs for secrets (in this case, the access keys), the linter will complain, as shown below:
+
+![Image](../images/bicep-module-output-lint.png)
+
+This is an issue because inputs and outputs are stored in the details of Deployments, meaning a user with read permission could potentially access the values.  In this situation there is a workaround, having the module output the resourceId and then use that value to safely lookup the keys.
+
+With Azure Verified Modules (AVM), the approach is more structured.  AVMs have an approach where secrets are saved to a defined keyvault.  These values can then be referenced by other resources.  This is an approach that can work for regular modules but adds additional resources to manage.
+
 ### Convention over Configuration
 
 Convention over Configuration is a software design concept aimed at reducing the number of decisions or inputs required to do something.  It partners well with Infrastructure provisioning and Infrastructure as Code because we often create rules for how resources should be, such as their name and other characteristics.  Using resource naming as an example, if your organisation has a defined naming standard similar to that mentioned in their documentation, it is possible to construct the names (ie. use a convention) rather than have their hard-coded (ie. they become an item in configuration)
