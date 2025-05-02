@@ -5,9 +5,9 @@ theme:
   custom_dir: docs/overrides
   feature:
     - content.tooltips
+    - content.code.copy # Copy-to-clipboard button is now opt-in in 9.x
     #- toc.integrate
     #- navigation.path
-    #- content.code.copy
   palette:
     # Palette toggle for light mode
     - scheme: default
